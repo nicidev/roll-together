@@ -1,5 +1,5 @@
 import { EventHub } from "./eventhub.js";
-import { ClientEvent, DiceEvent, NetworkEvent } from "./events.js";
+import { ClientEvent, DiceEvent, NetworkEvent, symbolToString } from "./events.js";
 import { Network } from "./network.js";
 
 export class DicePusher {
@@ -188,7 +188,7 @@ export class DicePusher {
         if (!document.body) {
             return;
         }
-        document.body.dispatchEvent(new Event(event, data))
+        document.body.dispatchEvent(new Event(symbolToString(event), data))
     }
 }
 

@@ -71,7 +71,7 @@ export class Network {
                     data.sender = metadata.user_id;
                     EventHub.trigger(event, data);
                 }
-            })(event));
+            })(ClientEvent[event]));
             this.log("subscribed to " + eventName);
         }
         return roomId;

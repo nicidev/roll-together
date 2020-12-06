@@ -27,7 +27,8 @@ export class EventHub {
             try {
                 handler(Object.assign({}, data));
             }catch(e) {
-                // ignore failing handlers
+                console.log("Error while handling event " + String(event));
+                console.log(e);
             }
         }
     }
