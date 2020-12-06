@@ -2,31 +2,43 @@
 //	export let name;
 	import Header from './components/Header.svelte';
 	import Footer from './components/Footer.svelte';
-	import Button from './shared/Button.svelte';
 	import Die from './components/Die.svelte';
-	import Tab from './components/Tabs.svelte';
+	import Tabs from './shared/Tabs.svelte';
+	import PlayerConfig from './components/PlayerConfig.svelte';
+	import PlayerList from './components/PlayerList.svelte';
+	
+	let playerName = 'Nici';
 
 	$: currentRoll = 6;
-	const handleRoll = () => {
+	const handleRoll = (name) => {
 		currentRoll = Math.floor(Math.random() * 6) + 1;
-		console.log(currentRoll);
+		console.log(name + "rolled " + currentRoll);
 	}
+	
+	//tabs
+	let items = ['Player Config', 'Game'];
+	let activeItem = 'Game';
 
-	let playerName = '';
+	const tabChange = (e) => {
+		activeItem = e.detail;
+	};
 
+	const handleAdd = () => {
+    	activeItem = 'Game';
+  	}
 </script>
 <Header/>
 
 <main>
-	<div>
-		<label for="playerName">Player name</label>
-		<input type="text" id="playerName" bind:value={playerName}>
-	</div>
-
-
-	<div class="result">
-		<Die numberRolled={currentRoll}  on:click={() => handleRoll()}/>
-	</div>
+	<Tabs {activeItem} {items} on:tabChange={tabChange}/>
+	{#if activeItem === 'Player Config'}
+		<PlayerConfig name={playerName} on:add={handleAdd}/>
+	{:else if activeItem === 'Game'}
+		<div class="result">
+			<Die numberRolled={currentRoll}  on:click={() => handleRoll(playerName)}/>
+		</div>
+		<PlayerList/>
+	{/if}
 </main>
 
 <Footer/>
