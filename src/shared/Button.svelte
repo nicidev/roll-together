@@ -42,9 +42,9 @@
     }
 
     .secondary.inverse{
-        color: #45c496;
+        color: #00CA75;
         background-color: white;
-        border: 2px solid #45c496;
+        border: 2px solid #00CA75;
     }
 
 

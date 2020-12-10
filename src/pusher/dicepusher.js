@@ -54,12 +54,16 @@ export class DicePusher {
                 eyes : eyes,
                 next : this.userlist[i].id
             }, this.self.id);
+            return eyes;
         }
+        return 0;
     }
 
     addDice() {
         this.dices.push(this.self.id);
         this.sendDiceInfo();
+        this.updated();
+        return this.self.id;
     }
 
     canRoll() {
