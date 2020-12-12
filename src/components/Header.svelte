@@ -9,11 +9,11 @@
 
 <style>
     header{
-        background: #f7f7f7;
         padding: 20px;
+        padding-top: 0px;
+        padding-bottom: 1px;
         text-align: center;
         color: white;
-
 
         background-color:#00CA75;
         background-image: 
@@ -35,14 +35,19 @@
     h1 {
         background: #b06c25;
         border: 1px dashed #fff;
-        padding: 1rem 3rem;
         outline:5px solid #b06c25;
-        color:rgb(209, 209, 209);
+        margin-block-start: auto;
+        margin-block-end: auto;
+        margin-bottom: 20px;
+
+        padding: 5px;
+        color:rgb(255, 255, 255);
         text-shadow: 3px 2px 4px #8b4c04;
     }
     img{
         position:relative;
         margin-top: 0;
+        margin-bottom: 1px;
         max-height: 180px;
     }
 </style>

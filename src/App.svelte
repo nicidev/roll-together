@@ -2,7 +2,7 @@
 //	export let name;
 	import { DicePusher} from "./pusher/dicepusher.js";
 	import { DicePusherStatus } from "./pusher/dicepusher.js";
-
+	import Card from './shared/Card.svelte';
 	import Header from './components/Header.svelte';
 	import Footer from './components/Footer.svelte';
 	import Error from './components/status/Error.svelte';
@@ -12,19 +12,6 @@
 	import { EventHub } from "./pusher/eventhub.js";
 	import { ClientEvent } from "./pusher/events.js";
 
-
-	
-	// //tabs
-	// let items = ['Player Config', 'Game'];
-	// let activeItem = 'Game';
-
-	// const tabChange = (e) => {
-	// 	activeItem = e.detail;
-	// };
-
-	// const handleAdd = () => {
-    // 	activeItem = 'Game';
-	//   }
 	$: dicepusher = new DicePusher({
             network: {
                 authEndpoint : "http://gheist.net/api/pusher/auth/generic/presence/1098358",
@@ -47,7 +34,7 @@
 		blockedDice[roll.dice] = true;
 		window.setTimeout(() =>{
 			blockedDice[roll.dice] = false;
-		}, 4500);
+		}, 2500);
 	});
 
 
@@ -85,8 +72,14 @@
 	};
 </script>
 <Header/>
-
+<div class="setting">
+	{#if dicepusher.self.firstUser === true}
+	<Button on:click={addDice}>Add Dice</Button>
+	<br>
+{/if}
+</div>
 <main>
+	<div class="gamearea">
 	{#if dicepusher.status ===  DicePusherStatus.SETUP}
 		<Setup/>
 	{:else if dicepusher.status ===  DicePusherStatus.ERROR}
@@ -96,38 +89,25 @@
 	{:else if dicepusher.status ===  DicePusherStatus.CONNECTED}
 		<h3>Room {dicepusher.room}</h3>
 		<div>
-		{#if dicepusher.self.firstUser === true}
-			<Button on:click={addDice}>Add Dice</Button>
-			<br>
-		{/if}
-
 		{#each dices as die}
-			{die.user.name} holds this die.
-			{#if die.yourTurn}
-				{#if blockedDice[die.id]}
-				WAIT!
+		<Card>
+			<div class="diespace">
+				{#if die.yourTurn}
+					<p><b>Du<br>bist dran!</b></p>
+					<img src="../img/{lastRolls[die.id]||1}.gif" alt="Dice" on:click={() => handleRoll(die.id)} >
+				{:else}
+					<p>{die.user.name}<br>ist dran</p>
+					<img src="../img/{lastRolls[die.id]||1}.gif" alt="Dice" >
 				{/if}
-				<img src="../img/{lastRolls[die.id]||1}.gif" alt="Dice" on:click={() => handleRoll(die.id)} >
-			{:else}
-				<img src="../img/{lastRolls[die.id]||1}.gif" alt="Dice" >
-			{/if}
+			</div>
+		</Card>
 		{/each}
-		
 		</div>
-		
+		<div>
+
+		</div>
 	{/if}
-
-
-	<!-- <Tabs {activeItem} {items} on:tabChange={tabChange}/>
-	{#if activeItem === 'Player Config'}
-		<PlayerConfig name={playerName} on:add={handleAdd}/>
-	{:else if activeItem === 'Game'}
-		<div class="result">
-			<Die numberRolled={currentRoll}  on:click={() => handleRoll(playerName)}/>
-		</div>
-		<PlayerList/>
-	{/if} -->
-	
+	</div>
 
 </main>
 
@@ -135,9 +115,18 @@
 <style>
 	main {
 		text-align: center;
-		padding: 5em;
 		max-width: 240px;
 		margin: 0 auto;
+		border-width: 2px;
+	}
+
+	.diespace{
+		max-width: 100px;
+	}
+
+	.gamearea{
+		border-width: 5px;
+		border-color: rgb(95, 95, 95);
 	}
 
 </style>
