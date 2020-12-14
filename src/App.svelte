@@ -11,7 +11,6 @@
 	import Button from './shared/Button.svelte';
 	import { EventHub } from "./pusher/eventhub.js";
 	import { ClientEvent, DiceEvent } from "./pusher/events.js";
-import { update_slot_spread } from "svelte/internal";
 
 	$: dicepusher = new DicePusher({
             network: {
@@ -43,6 +42,7 @@ import { update_slot_spread } from "svelte/internal";
 	EventHub.listen(DiceEvent.ROOM_USER_JOIN, (user) =>{
 		console.log("User Joined Room: " + user.info.name);
 		console.log("Current users: ");
+		logEvent(user.info.name + " ist dem Raum beigetreten")
 		playerList = [];
 		dicepusher.userlist.map((user) => {
 			let tmp = {};
@@ -62,6 +62,13 @@ import { update_slot_spread } from "svelte/internal";
 		console.log("User Left Room: " + user.info.name);
 	});
 
+	$: eventslog = [];
+
+	const logEvent = (s) => {
+		eventslog.unshift({id: eventslog.length, message: s});
+		eventslog = eventslog;
+		console.log(eventslog);
+	};
 
 
 	const joinHandler = (e) => {
@@ -91,25 +98,28 @@ import { update_slot_spread } from "svelte/internal";
 
 
 	const handleRoll = (diceId) => {
+		logEvent("click");
 		if(!blockedDice[diceId]){
 			dicepusher.roll(diceId)
 		}
 	};
 </script>
 <Header/>
-<div>
 	<div class="setting">
 		{#if dicepusher.self.firstUser === true}
 			<Button on:click={addDice}>Add Dice</Button>
 			<br>
 		{/if}
 	</div>
-</div>
+	<div class="eventlog">
+		{#each eventslog as event}	
+			<span>
+				{event.message}
+			</span>
+		{/each}	
+	</div>
 
 <main>
-	<div class="playerlist">
-		
-	</div>
 	<div class="gamearea">
 	{#if dicepusher.status ===  DicePusherStatus.SETUP}
 		<Setup/>
@@ -161,6 +171,12 @@ import { update_slot_spread } from "svelte/internal";
 		border-width: 2px;
 	}
 
+	.setting{
+		position: absolute;
+		top: 0.5em;
+		left: 0.5em;
+	}
+
 	.diespace{
 		max-width: 100px;
 	}
@@ -168,6 +184,33 @@ import { update_slot_spread } from "svelte/internal";
 	.gamearea{
 		border-width: 5px;
 		border-color: rgb(95, 95, 95);
+	}
+
+	.eventlog{
+		white-space: nowrap;
+		background: #00CA7533;
+    border-width: thin;
+    border-color: darkgray;
+    margin-top: 0.25em;
+		overflow: hidden;
+	}
+	.eventlog span{
+		display: inline-block;
+		padding: 0 0.5em;
+		position: relative;
+	}
+
+	.eventlog span::before{
+		display: inline-block;
+		content: "\2744";
+		position: absolute;
+		width: 1em;
+		text-align: center;
+		left: -0.5em;
+	}
+
+	.eventlog span:first-child::before{
+		display: none;
 	}
 
 </style>
