@@ -1,5 +1,5 @@
 <footer>
-    <div class="copyright">Copyright here -.- </div>
+    <div class="copyright">Nicole Heinze - 2020</div>
 </footer>
 
 <style>

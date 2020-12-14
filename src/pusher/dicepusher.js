@@ -169,6 +169,7 @@ export class DicePusher {
                 // last remaining user becomes first user
                 this.firstUser = true;
             }
+            
             this.updateUserList();
             this.forwardEvent(DiceEvent.ROOM_USER_LEAVE, this.users);
         });

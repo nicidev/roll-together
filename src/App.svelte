@@ -10,7 +10,8 @@
 	import Join from './components/status/Join.svelte';
 	import Button from './shared/Button.svelte';
 	import { EventHub } from "./pusher/eventhub.js";
-	import { ClientEvent } from "./pusher/events.js";
+	import { ClientEvent, DiceEvent } from "./pusher/events.js";
+import { update_slot_spread } from "svelte/internal";
 
 	$: dicepusher = new DicePusher({
             network: {
@@ -20,12 +21,14 @@
 		});	
 
 	$: lastRolls = [1];
-	$: blockedDice = [];
+	$: blockedDice = [];	
+	$: playerList = [];
 
 	let credentials = {roomName:'' , playerName:''};
 	document.body.addEventListener('dice-pusher-updated', () => {
 		dicepusher = dicepusher;
 		console.log("Updated DicePusher")
+		console.log("Users: " );
 	});
 
 	EventHub.listen(ClientEvent.ROLL_DICE, (roll) =>{
@@ -35,6 +38,28 @@
 		window.setTimeout(() =>{
 			blockedDice[roll.dice] = false;
 		}, 2500);
+	});
+
+	EventHub.listen(DiceEvent.ROOM_USER_JOIN, (user) =>{
+		console.log("User Joined Room: " + user.info.name);
+		console.log("Current users: ");
+		playerList = [];
+		dicepusher.userlist.map((user) => {
+			let tmp = {};
+			tmp.id = user.id; 
+			tmp.name = user.name || "anonymous?";
+			playerList.push(tmp);
+			console.log("\n" + tmp.name)
+		})
+
+		let newUser = {};
+		newUser.id = user.info.id;
+		newUser.name = user.info.name;
+		playerList.push(newUser);
+	});
+
+	EventHub.listen(DiceEvent.ROOM_USER_LEAVE, (user) =>{
+		console.log("User Left Room: " + user.info.name);
 	});
 
 
@@ -72,13 +97,19 @@
 	};
 </script>
 <Header/>
-<div class="setting">
-	{#if dicepusher.self.firstUser === true}
-	<Button on:click={addDice}>Add Dice</Button>
-	<br>
-{/if}
+<div>
+	<div class="setting">
+		{#if dicepusher.self.firstUser === true}
+			<Button on:click={addDice}>Add Dice</Button>
+			<br>
+		{/if}
+	</div>
 </div>
+
 <main>
+	<div class="playerlist">
+		
+	</div>
 	<div class="gamearea">
 	{#if dicepusher.status ===  DicePusherStatus.SETUP}
 		<Setup/>
@@ -88,23 +119,33 @@
 		<Join  on:joinRoom={joinHandler}/>
 	{:else if dicepusher.status ===  DicePusherStatus.CONNECTED}
 		<h3>Room {dicepusher.room}</h3>
-		<div>
-		{#each dices as die}
-		<Card>
-			<div class="diespace">
-				{#if die.yourTurn}
-					<p><b>Du<br>bist dran!</b></p>
-					<img src="../img/{lastRolls[die.id]||1}.gif" alt="Dice" on:click={() => handleRoll(die.id)} >
-				{:else}
-					<p>{die.user.name}<br>ist dran</p>
-					<img src="../img/{lastRolls[die.id]||1}.gif" alt="Dice" >
-				{/if}
+			<div>
+				{#each dices as die}
+				<Card>
+					<div class="diespace">
+						{#if die.yourTurn}
+							<p><b>Du<br>bist dran!</b></p>
+							<img src="../img/{lastRolls[die.id]||1}.gif" alt="Dice" on:click={() => handleRoll(die.id)} >
+						{:else}
+							<p>{die.user.name}<br>ist dran.</p>
+							<img src="../img/{lastRolls[die.id]||1}.gif" alt="Dice" >
+						{/if}
+					</div>
+				</Card>
+				{/each}
 			</div>
-		</Card>
-		{/each}
-		</div>
 		<div>
-
+			<br>
+			<b>Spieler:innen</b><br>
+			{#each dicepusher.userlist as player}
+				{player.name}
+				{#each dices as die}
+					{#if die.user.id === player.id}
+						&#x1f3b2;
+					{/if}
+				{/each}
+				<br>
+			{/each}
 		</div>
 	{/if}
 	</div>
