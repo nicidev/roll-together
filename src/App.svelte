@@ -11,6 +11,7 @@
 	import Button from './shared/Button.svelte';
 	import { EventHub } from "./pusher/eventhub.js";
 	import { ClientEvent, DiceEvent } from "./pusher/events.js";
+import { now } from "svelte/internal";
 
 	$: dicepusher = new DicePusher({
             network: {
@@ -139,10 +140,10 @@
 							<div class="diespace">	
 								{#if die.yourTurn}
 									<p><b>Du<br>bist dran!</b></p>
-									<img src="img/{lastRolls[die.id]||1}.gif" alt="Dice" on:click={() => handleRoll(die.id)} >
+									<img src="img/{lastRolls[die.id]||1}.gif?{die.id}" alt="Dice" on:click={() => handleRoll(die.id)} >
 								{:else}
 									<p>{die.user.name}<br>ist dran.</p>
-									<img src="img/{lastRolls[die.id]||1}.gif" alt="Dice" >
+									<img src="img/{lastRolls[die.id]||1}.gif?{die.id}" alt="Dice" >
 								{/if}
 							</div>
 						</Card>
