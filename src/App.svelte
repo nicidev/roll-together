@@ -34,13 +34,17 @@
 		lastRolls[roll.dice] = roll.eyes;
 		console.log("Last Rolls: " + lastRolls);
 		let roller = dicepusher.userlist.find(x =>x.id === roll.sender).name;
-		logEvent(roller + " hat eine " + roll.eyes + " gewürfelt");
+		let style = 'none';
+		if(roll.eyes === 6){
+			style = 'bold';
+		}
 		blockedDice[roll.dice] = true;
 		cardStatus[roll.dice] = 'inactive';
 		window.setTimeout(() =>{
 			cardStatus[roll.dice] = 'active';
 			blockedDice[roll.dice] = false;
-		}, 2500);
+			logEvent(roller + " hat eine " + roll.eyes + " gewürfelt", style);
+		}, 3000);
 	});
 
 	EventHub.listen(DiceEvent.ROOM_USER_JOIN, (user) =>{
@@ -59,8 +63,10 @@
 
 	$: eventslog = [];
 
-	const logEvent = (s) => {
-		eventslog.unshift({id: eventslog.length, message: s});
+	let styleType = 'none';
+	const logEvent = (message, style) => {
+		let messageStyle = style || 'none';
+		eventslog.unshift({id: eventslog.length, message:message, style:messageStyle});
 		eventslog = eventslog;
 	};
 
@@ -111,7 +117,7 @@
 	</div>
 	<div class="eventlog">
 		{#each eventslog as event}	
-			<span>
+			<span class={event.style}>
 				{event.message}
 			</span>
 		{/each}	
@@ -148,7 +154,7 @@
 			<b>Spieler:innen</b><br>
 			{#each dicepusher.userlist as player}
 			{#if missingDice.indexOf(player.id) === -1}
-				{player.id}
+				{player.name}
 				{#each dices as die}
 					{#if die.user}
 						{#if die.user.id === player.id}
@@ -162,7 +168,14 @@
 		</div>
 	{/if}
 	</div>
-
+	<div>
+		<img class="imagepreload" src="img/1.gif" alt ="">
+		<img class="imagepreload" src="img/2.gif" alt ="">
+		<img class="imagepreload" src="img/3.gif" alt ="">
+		<img class="imagepreload" src="img/4.gif" alt ="">
+		<img class="imagepreload" src="img/5.gif" alt ="">
+		<img class="imagepreload" src="img/6.gif" alt ="">
+	</div>
 </main>
 
 <Footer/>
@@ -172,6 +185,11 @@
 		max-width: 280px;
 		margin: 0 auto;
 		border-width: 2px;
+	}
+
+	.imagepreload{
+		max-width: 1px;
+		max-height: 1px;
 	}
 
 	.setting{
@@ -217,6 +235,13 @@
 
 	.eventlog span:first-child::before{
 		display: none;
+	}
+
+	.bold{
+		font-weight: bold;
+	}
+	.none{
+		font-weight: normal;
 	}
 
 </style>

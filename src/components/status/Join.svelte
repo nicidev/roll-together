@@ -17,7 +17,11 @@
             valid = false;
         }
         if(credentials.playerName.trim().length < 1){
-            errorMessageName = 'Hast du keinen Namen?'
+            errorMessageName = 'Hast du keinen Namen?';
+            valid = false;
+        }
+        if(credentials.playerName.trim().length > 10){
+            errorMessageName = 'Uhh... der Name ist ein bisschen zu lang (mehr als 10 Zeichen)';
             valid = false;
         }
         if(valid){
