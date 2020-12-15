@@ -140,10 +140,10 @@ import { now } from "svelte/internal";
 							<div class="diespace">	
 								{#if die.yourTurn}
 									<p><b>Du<br>bist dran!</b></p>
-									<img src="img/{lastRolls[die.id]||1}.gif?{die.id}" alt="Dice" on:click={() => handleRoll(die.id)} >
+									<img src="img/{lastRolls[die.id]||1}.gif?{die.user.id}" alt="Dice" on:click={() => handleRoll(die.id)} >
 								{:else}
 									<p>{die.user.name}<br>ist dran.</p>
-									<img src="img/{lastRolls[die.id]||1}.gif?{die.id}" alt="Dice" >
+									<img src="img/{lastRolls[die.id]||1}.gif?{die.user.id}" alt="Dice" >
 								{/if}
 							</div>
 						</Card>
