@@ -1,4 +1,10 @@
-<div class="card">
+<script>
+  export let inactive = false;
+  $: disabled = inactive;
+
+</script>
+
+<div class="card" class:inactive={disabled}>
   <slot></slot>
 </div>
 
@@ -8,8 +14,12 @@
     border-radius: 6px;
     box-shadow: 0px 2px 4px rgba(0,0,0,0.6);
     display: inline-block;
-		margin-left: 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin: 7px 5px 5px 10px;
+    padding: 0 4px;
+  }
+
+  .inactive{
+    outline: none;
+    box-shadow: inset 0px 0px 4px rgba(0,0,0,0.6);
   }
 </style>

@@ -1,5 +1,5 @@
 <header>
-    <img src="../img/cody.png" alt="Cody rolls">
+    <img src="img/cody.png" alt="Cody rolls">
 
     <h1>
         Let's roll together! 
